@@ -1,12 +1,7 @@
 import { AppContext, withApp } from "../components/AppWrapper";
-import { Maybe } from "../utilities/types";
-import { mutate } from "swr";
 import { useAuthenticate } from "../utilities/hooks";
 import { useRouter } from "next/dist/client/router";
-import Box from "../components/Box";
-import Button from "../components/form/Button";
-import Flex from "../components/Flex";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UserCertificates from "../components/UserCertificates";
 import UserInformation from "../components/UserInformation";
 import Wrapper from "../components/Wrapper";

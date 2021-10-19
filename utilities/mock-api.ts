@@ -9,6 +9,7 @@ const USERS: API_User[] = [
     firstname: "Lukas",
     lastname: "Bruegger",
     email: "lb@imovies.ch",
+    isAdministrator: true,
   },
   {
     username: "ps",
@@ -16,6 +17,7 @@ const USERS: API_User[] = [
     firstname: "Patrick",
     lastname: "Schaller",
     email: "ps@imovies.ch",
+    isAdministrator: false,
   },
   {
     username: "ms",
@@ -23,6 +25,7 @@ const USERS: API_User[] = [
     firstname: "Michael",
     lastname: "Schlaepfer",
     email: "ms@imovies.ch",
+    isAdministrator: false,
   },
   {
     username: "a3",
@@ -30,6 +33,7 @@ const USERS: API_User[] = [
     firstname: "Andres Alan",
     lastname: "Anderson",
     email: "and@imovies.ch",
+    isAdministrator: false,
   },
 ];
 
@@ -90,4 +94,11 @@ export const revokeCertificate = (id: number) => {
   }
 };
 
-export const getRevokedCertificates = () => CERTIFICATES.find((c) => c.revoked);
+export const getRevokedCertificates = () =>
+  CERTIFICATES.filter((c) => c.revoked);
+
+export const getNumberOfIssuedCertificates = () => CERTIFICATES.length;
+export const getNumberOfRevokesCertificates = () =>
+  CERTIFICATES.filter((c) => c.revoked).length;
+
+export const getCurrentSerialNumber = () => NEXT_CERTIFICATE_ID;

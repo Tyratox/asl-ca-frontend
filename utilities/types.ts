@@ -14,6 +14,7 @@ export interface User {
   firstname: string;
   lastname: string;
   email: string;
+  isAdministrator: boolean;
 }
 
 export interface ErrorResponse {
