@@ -1,5 +1,7 @@
 //dependencies
-import { ErrorResponse, Maybe, User } from "../utilities/types";
+import { GET_CURRENT_USER } from "../graphql/user";
+import { Maybe } from "../utilities/types";
+import { Query, User } from "../schema";
 import { useLocalStorage } from "../utilities/hooks";
 import React, {
   FunctionComponent,
@@ -8,6 +10,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import request from "../utilities/request";
 import useSWR from "swr";
 
 export const AppContext = React.createContext<{
@@ -21,22 +24,19 @@ export const AppContext = React.createContext<{
 const AppWrapper: FunctionComponent = ({ children }) => {
   const [token, setToken] = useLocalStorage("auth-token");
 
-  const { data, error } = useSWR<
-    | {
-        me: User;
-      }
-    | ErrorResponse
-  >(token ? ["/api/users/me", token] : null, (query) =>
-    fetch(query, { method: "POST", body: JSON.stringify({ token }) }).then(
-      (r) => r.json()
-    )
+  const { data, error } = useSWR<{ me: Query["me"] }>(
+    token ? GET_CURRENT_USER : null,
+    (query) => request(query)
   );
 
   useEffect(() => {
-    if (data && "error" in data) {
+    if (data && !("me" in data)) {
       localStorage.removeItem("auth-token");
     }
   }, [data]);
+
+  console.log(token);
+  console.log(data);
 
   return (
     <AppContext.Provider

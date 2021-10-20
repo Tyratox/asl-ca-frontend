@@ -1,87 +1,86 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-import { Certificate, ErrorResponse, Maybe, User } from "../utilities/types";
-import { CertificateResponse } from "../pages/api/certificates";
+import { AppContext } from "./AppWrapper";
+import { Certificate, Mutation } from "../schema";
+import {
+  GENERATE_CERTIFICATE,
+  REVOKE_CERTIFICATE,
+} from "../graphql/certificates";
+import { GET_CURRENT_USER } from "../graphql/user";
+import { Maybe } from "../utilities/types";
 import Box from "../components/Box";
 import Button from "../components/form/Button";
 import Flex from "../components/Flex";
 import Input from "./form/Input";
 import Label from "./form/Label";
 import Table from "./Table";
+import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
 
 const UserCertificates: FunctionComponent<{
   token: Maybe<string>;
   hasChanges: boolean;
 }> = ({ token, hasChanges }) => {
+  const { user } = useContext(AppContext);
   const [name, setName] = useState("");
 
   //maybe display the just generated certificate
   const [lastCertificate, setLastCertificate] =
     useState<Maybe<Certificate>>(null);
 
-  const { data, error } = useSWR<
-    | {
-        certificates: Certificate[];
-      }
-    | ErrorResponse
-  >(token ? ["/api/certificates", token] : null, (query) =>
-    fetch(query, { method: "POST", body: JSON.stringify({ token }) }).then(
-      (r) => r.json()
-    )
-  );
-
   const generateCertificate = (
+    //@ts-ignore
     e: MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     if (hasChanges) {
       return;
     }
 
-    return fetch("/api/certificates", {
-      method: "POST",
-      body: JSON.stringify({ token, name }),
-    })
-      .then((r) => r.json())
-      .then((r: ErrorResponse | CertificateResponse) => {
-        if ("certificate" in r) {
-          setLastCertificate(r.certificate);
+    return request(GENERATE_CERTIFICATE, { name }).then(
+      (result: { generateCertificate: Mutation["generateCertificate"] }) => {
+        setLastCertificate(result.generateCertificate);
 
-          //encode in base64, if actualy certificate is downloaded
-          //this will probably be already be the case
-          //TODO: remove
-          const file = btoa(r.certificate.blob);
+        //encode in base64, if actualy certificate is downloaded
+        //this will probably be already be the case
+        //TODO: remove
+        const file = btoa(
+          `Some binary data of certificate ${result.generateCertificate.name}`
+        );
 
-          //download certificate
-          const a = document.createElement("a");
-          a.href = "data:application/octet-stream;base64," + file;
-          a.download = `${r.certificate.name}.txt`; //TODO: change extension
-          a.click(); //Downloaded file
-        }
+        //download certificate
+        const a = document.createElement("a");
+        a.href = "data:application/octet-stream;base64," + file;
+        a.download = `${result.generateCertificate.name}.txt`; //TODO: change extension
+        a.click(); //Downloaded file
 
-        if (data && "certificates" in data && "certificate" in r) {
-          setName("");
-
-          mutate(["/api/certificates", token], {
-            certificates: [...data.certificates, r.certificate],
-          });
-        }
-      });
+        setName("");
+        mutate(GET_CURRENT_USER);
+      }
+    );
   };
   const revoke =
-    (id: number) => (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      return fetch("/api/certificates", {
-        method: "DELETE",
-        body: JSON.stringify({ token, id }),
-      })
-        .then((r) => r.json())
-        .then((r) => {
-          if (data && "certificates" in data && "certificates" in r) {
-            mutate(["/api/certificates", token], {
-              certificates: r.certificates,
-            });
+    (id: string) =>
+    (
+      //@ts-ignore
+      e: MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+      return request(REVOKE_CERTIFICATE, {
+        id,
+      }).then(
+        (result: { revokeCertificate: Mutation["revokeCertificate"] }) => {
+          if ("success" in result.revokeCertificate) {
+            mutate(GET_CURRENT_USER);
+          } else {
+            //TODO: display error
           }
-        });
+        }
+      );
     };
 
   return (
@@ -117,26 +116,21 @@ const UserCertificates: FunctionComponent<{
             </tr>
           </thead>
           <tbody>
-            {data && "certificates" in data ? (
-              data.certificates.map((c, index) => (
+            {user &&
+              user.certificates.map((c, index) => (
                 <tr key={index}>
                   <td>{c.id}</td>
                   <td>{c.name}</td>
-                  <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                  <td>{new Date(c.created_at).toLocaleDateString()}</td>
                   <td>
-                    {c.revoked ? (
+                    {c.is_revoked ? (
                       "Revoked"
                     ) : (
                       <Button onClick={revoke(c.id)}>Revoke</Button>
                     )}
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">Error</td>
-              </tr>
-            )}
+              ))}
           </tbody>
         </Table>
       </Box>

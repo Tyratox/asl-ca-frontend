@@ -1,4 +1,6 @@
+import { AUTHENTICATE } from "../graphql/user";
 import { AppContext, withApp } from "../components/AppWrapper";
+import { AuthenticationResult, Mutation } from "../schema";
 import { ErrorResponse } from "../utilities/types";
 import { LoginResponse } from "./api/login";
 import { NextPage } from "next";
@@ -11,6 +13,7 @@ import Input from "../components/form/Input";
 import Label from "../components/form/Label";
 import React, { useContext, useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
+import request from "../utilities/request";
 
 const Login: NextPage = () => {
   const { user, token } = useContext(AppContext);
@@ -27,20 +30,17 @@ const Login: NextPage = () => {
   }, [isAuthenticated]);
 
   const login = () => {
-    fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-    })
-      .then((r) => r.json())
-      .then((resp: LoginResponse | ErrorResponse) => {
-        if ("error" in resp) {
+    request(AUTHENTICATE, { username, password }).then(
+      (result: { authenticate: Mutation["authenticate"] }) => {
+        if ("message" in result.authenticate) {
           //TODO: display error message
           return false;
         } else {
-          localStorage.setItem("auth-token", resp.token);
+          localStorage.setItem("auth-token", result.authenticate.session_id);
           router.push("/");
         }
-      });
+      }
+    );
   };
 
   return (

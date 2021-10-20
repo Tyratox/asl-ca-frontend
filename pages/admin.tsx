@@ -22,7 +22,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
-    } else if (user && !user.isAdministrator) {
+    } else if (user && /*!user.isAdministrator*/ true) {
       router.push("/");
     }
   }, [isAuthenticated, user]);
