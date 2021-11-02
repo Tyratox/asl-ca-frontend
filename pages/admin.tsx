@@ -1,6 +1,5 @@
 import { AppContext, withApp } from "../components/AppWrapper";
 import { Maybe } from "../utilities/types";
-import { SystemResponse } from "./api/system";
 import { useAuthenticate } from "../utilities/hooks";
 import { useRouter } from "next/dist/client/router";
 import Box from "../components/Box";

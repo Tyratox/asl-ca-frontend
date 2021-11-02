@@ -1,8 +1,6 @@
 import { AUTHENTICATE } from "../graphql/user";
 import { AppContext, withApp } from "../components/AppWrapper";
 import { AuthenticationResult, Mutation } from "../schema";
-import { ErrorResponse } from "../utilities/types";
-import { LoginResponse } from "./api/login";
 import { NextPage } from "next";
 import { useAuthenticate } from "../utilities/hooks";
 import { useRouter } from "next/dist/client/router";

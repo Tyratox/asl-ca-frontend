@@ -95,7 +95,8 @@ const UserInformation: FunctionComponent<{
             onChange={(e) => setPassword(e.target.value)}
           />
           <Note>
-            Note: If you leave this field empty, the password won't be changed.
+            Note: If you leave this field empty, the password won&apos;t be
+            changed.
           </Note>
           {password && password.length > 0 && (
             <>
