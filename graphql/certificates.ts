@@ -1,9 +1,13 @@
 export const GENERATE_CERTIFICATE = /* GraphQL */ `
   mutation GenerateCertificate($name: String!) {
     generateCertificate(name: $name) {
-      id
-      name
-      is_revoked
+      certificate {
+        id
+        name
+        certificateFile
+        is_revoked
+      }
+      privateKey
     }
   }
 `;

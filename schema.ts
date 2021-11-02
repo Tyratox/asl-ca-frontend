@@ -24,6 +24,8 @@ export type AuthenticationResult = AuthenticationException | Session;
 
 export type Certificate = {
   __typename?: 'Certificate';
+  /** The corresponding certificate file encoded in Base64 */
+  certificateFile: Scalars['String'];
   /** The date the certificate has been created */
   created_at: Scalars['DateTime'];
   /** The certificate id */
@@ -41,7 +43,7 @@ export type Mutation = {
   /** Logs a user in and returns a new valid session id */
   authenticate: AuthenticationResult;
   /** Generates a new certificate */
-  generateCertificate: Certificate;
+  generateCertificate: NewCertificate;
   /** Logs a user out, deletes the session id */
   logout: Scalars['Boolean'];
   /** Revokes an existing certificate of the logged in user */
@@ -81,6 +83,14 @@ export type MutationUpdatePasswordArgs = {
   oldPassword: Scalars['String'];
 };
 
+export type NewCertificate = {
+  __typename?: 'NewCertificate';
+  /** The certificate */
+  certificate: Certificate;
+  /** The prvate key encoded in Base64 */
+  privateKey: Scalars['String'];
+};
+
 /** An exception that is raised during authentication */
 export type NotFoundException = {
   __typename?: 'NotFoundException';
@@ -90,6 +100,8 @@ export type NotFoundException = {
 
 export type Query = {
   __typename?: 'Query';
+  /** The current certificate revocation list encoded in Base64 */
+  crl: Scalars['String'];
   /** Retrieves the current user */
   me: User;
 };

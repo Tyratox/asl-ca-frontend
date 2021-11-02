@@ -35,9 +35,6 @@ const AppWrapper: FunctionComponent = ({ children }) => {
     }
   }, [data]);
 
-  console.log(token);
-  console.log(data);
-
   return (
     <AppContext.Provider
       value={{

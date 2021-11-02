@@ -23,6 +23,15 @@ import Table from "./Table";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
 
+const downloadCertificate = (certificate: Certificate) => {
+  //download private key
+  const a = document.createElement("a");
+  a.href =
+    "data:application/octet-stream;base64," + certificate.certificateFile;
+  a.download = `${certificate.name}.pem`;
+  a.click(); //Downloaded file
+};
+
 const UserCertificates: FunctionComponent<{
   token: Maybe<string>;
   hasChanges: boolean;
@@ -44,19 +53,17 @@ const UserCertificates: FunctionComponent<{
 
     return request(GENERATE_CERTIFICATE, { name }).then(
       (result: { generateCertificate: Mutation["generateCertificate"] }) => {
-        setLastCertificate(result.generateCertificate);
+        setLastCertificate(result.generateCertificate.certificate);
 
         //encode in base64, if actualy certificate is downloaded
         //this will probably be already be the case
         //TODO: remove
-        const file = btoa(
-          `Some binary data of certificate ${result.generateCertificate.name}`
-        );
+        const file = result.generateCertificate.privateKey;
 
-        //download certificate
+        //download private key
         const a = document.createElement("a");
         a.href = "data:application/octet-stream;base64," + file;
-        a.download = `${result.generateCertificate.name}.txt`; //TODO: change extension
+        a.download = `${result.generateCertificate.certificate.name}.key`; //TODO: change extension
         a.click(); //Downloaded file
 
         setName("");
@@ -120,7 +127,11 @@ const UserCertificates: FunctionComponent<{
               user.certificates.map((c, index) => (
                 <tr key={index}>
                   <td>{c.id}</td>
-                  <td>{c.name}</td>
+                  <td>
+                    <a href="#" onClick={() => downloadCertificate(c)}>
+                      {c.name}
+                    </a>
+                  </td>
                   <td>{new Date(c.created_at).toLocaleDateString()}</td>
                   <td>
                     {c.is_revoked ? (
