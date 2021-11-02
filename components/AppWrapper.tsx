@@ -30,7 +30,10 @@ const AppWrapper: FunctionComponent = ({ children }) => {
   );
 
   useEffect(() => {
-    if (data && !("me" in data)) {
+    if (
+      (data && !("me" in data)) ||
+      (error && error.toString().includes("Token not valid"))
+    ) {
       localStorage.removeItem("auth-token");
     }
   }, [data]);

@@ -37,7 +37,7 @@ const Header = () => {
       <Container>
         <Flex>
           <Box widths={[1 / 3, 1 / 4, 1 / 5, 1 / 6]}>
-            <Link href="/">iMovies Logo</Link>
+            <Link href="/">iMovies</Link>
           </Box>
           <Box widths={[2 / 3, 3 / 4, 4 / 5, 5 / 6]}>
             <Links>
@@ -47,6 +47,7 @@ const Header = () => {
               {isAuthenticated && user && /*user.isAdministrator*/ false && (
                 <Link href="/admin">Admin Interface</Link>
               )}
+              <Link href="/revocation-list">Revocation List</Link>
               {!isAuthenticated && <Link href="/login">Login</Link>}
               {isAuthenticated && <Link href="/logout">Logout</Link>}
             </Links>

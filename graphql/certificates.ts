@@ -25,3 +25,9 @@ export const REVOKE_CERTIFICATE = /* GraphQL */ `
     }
   }
 `;
+
+export const CERTIFICATE_REVOCATION_LIST = /* GraphQL */ `
+  query {
+    crl
+  }
+`;

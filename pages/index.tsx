@@ -22,6 +22,8 @@ const Home: NextPage = () => {
   }, [isAuthenticated]);
 
   if (!isAuthenticated || !user) {
+    JSON.stringify(isAuthenticated);
+    JSON.stringify(user);
     //TODO: show loading placeholder?
     return null;
   }
