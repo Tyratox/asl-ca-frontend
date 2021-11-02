@@ -24,8 +24,6 @@ export type AuthenticationResult = AuthenticationException | Session;
 
 export type Certificate = {
   __typename?: 'Certificate';
-  /** The corresponding certificate file encoded in Base64 */
-  certificateFile: Scalars['String'];
   /** The date the certificate has been created */
   created_at: Scalars['DateTime'];
   /** The certificate id */
@@ -63,6 +61,7 @@ export type MutationAuthenticateArgs = {
 
 export type MutationGenerateCertificateArgs = {
   name: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -87,8 +86,8 @@ export type NewCertificate = {
   __typename?: 'NewCertificate';
   /** The certificate */
   certificate: Certificate;
-  /** The prvate key encoded in Base64 */
-  privateKey: Scalars['String'];
+  /** The p12 file encoded in Base64 */
+  p12: Scalars['String'];
 };
 
 /** An exception that is raised during authentication */

@@ -36,7 +36,7 @@ const AppWrapper: FunctionComponent = ({ children }) => {
     ) {
       localStorage.removeItem("auth-token");
     }
-  }, [data]);
+  }, [data, error]);
 
   return (
     <AppContext.Provider

@@ -27,7 +27,6 @@ export const GET_CURRENT_USER = /* GraphQL */ `
       certificates {
         id
         name
-        certificateFile
         is_revoked
         created_at
         updated_at

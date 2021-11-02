@@ -11,7 +11,7 @@ import Input from "../components/form/Input";
 import Label from "../components/form/Label";
 import React, { useContext, useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
-import request from "../utilities/request";
+import request, { CERT_LOGIN_URL } from "../utilities/request";
 
 const Login: NextPage = () => {
   const { user, token } = useContext(AppContext);
@@ -41,6 +41,16 @@ const Login: NextPage = () => {
     );
   };
 
+  useEffect(() => {
+    if (router.query.token && !Array.isArray(router.query.token)) {
+      localStorage.setItem(
+        "auth-token",
+        decodeURIComponent(router.query.token)
+      );
+      router.push("/");
+    }
+  }, [router.query]);
+
   return (
     <Wrapper>
       <Flex>
@@ -61,7 +71,7 @@ const Login: NextPage = () => {
           <Button onClick={login}>Login</Button> or{" "}
           <Button
             onClick={() => {
-              window.location.href = "";
+              window.location.href = CERT_LOGIN_URL;
             }}
           >
             Login using Certificate

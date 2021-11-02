@@ -23,21 +23,13 @@ import Table from "./Table";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
 
-const downloadCertificate = (certificate: Certificate) => {
-  //download private key
-  const a = document.createElement("a");
-  a.href =
-    "data:application/octet-stream;base64," + certificate.certificateFile;
-  a.download = `${certificate.name}.pem`;
-  a.click(); //Downloaded file
-};
-
 const UserCertificates: FunctionComponent<{
   token: Maybe<string>;
   hasChanges: boolean;
 }> = ({ token, hasChanges }) => {
   const { user } = useContext(AppContext);
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
 
   //maybe display the just generated certificate
   const [lastCertificate, setLastCertificate] =
@@ -51,22 +43,23 @@ const UserCertificates: FunctionComponent<{
       return;
     }
 
-    return request(GENERATE_CERTIFICATE, { name }).then(
+    return request(GENERATE_CERTIFICATE, { name, password }).then(
       (result: { generateCertificate: Mutation["generateCertificate"] }) => {
         setLastCertificate(result.generateCertificate.certificate);
 
         //encode in base64, if actualy certificate is downloaded
         //this will probably be already be the case
         //TODO: remove
-        const file = result.generateCertificate.privateKey;
+        const file = result.generateCertificate.p12;
 
         //download private key
         const a = document.createElement("a");
         a.href = "data:application/octet-stream;base64," + file;
-        a.download = `${result.generateCertificate.certificate.name}.key`; //TODO: change extension
+        a.download = `${result.generateCertificate.certificate.name}.p12`; //TODO: change extension
         a.click(); //Downloaded file
 
         setName("");
+        setPassword("");
         mutate(GET_CURRENT_USER);
       }
     );
@@ -104,6 +97,12 @@ const UserCertificates: FunctionComponent<{
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+        <Label>Certificate Password</Label>
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <Button
           disabled={hasChanges || name.length === 0}
           onClick={generateCertificate}
@@ -127,11 +126,7 @@ const UserCertificates: FunctionComponent<{
               user.certificates.map((c, index) => (
                 <tr key={index}>
                   <td>{c.id}</td>
-                  <td>
-                    <a href="#" onClick={() => downloadCertificate(c)}>
-                      {c.name}
-                    </a>
-                  </td>
+                  <td>{c.name}</td>
                   <td>{new Date(c.created_at).toLocaleDateString()}</td>
                   <td>
                     {c.is_revoked ? (
