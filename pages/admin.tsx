@@ -1,5 +1,5 @@
 import { AppContext, withApp } from "../components/AppWrapper";
-import { ErrorResponse, Maybe } from "../utilities/types";
+import { Maybe } from "../utilities/types";
 import { SystemResponse } from "./api/system";
 import { useAuthenticate } from "../utilities/hooks";
 import { useRouter } from "next/dist/client/router";
@@ -27,20 +27,22 @@ const Home: NextPage = () => {
     }
   }, [isAuthenticated, user]);
 
-  const { data, error } = useSWR<SystemResponse | ErrorResponse>(
+  /*const { data, error } = useSWR<SystemResponse | ErrorResponse>(
     token ? ["/api/system", token] : null,
     (query) =>
       fetch(query, { method: "POST", body: JSON.stringify({ token }) }).then(
         (r) => r.json()
       )
-  );
+  );*/
 
   if (!isAuthenticated || !user) {
     //TODO: show loading placeholder?
     return null;
   }
 
-  if (!data || "error" in data) {
+  return null;
+
+  /*if (!data || "error" in data) {
     return (
       <Wrapper>
         <Flex>
@@ -70,7 +72,7 @@ const Home: NextPage = () => {
         <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}></Box>
       </Flex>
     </Wrapper>
-  );
+  );*/
 };
 
 export default withApp(Home);
