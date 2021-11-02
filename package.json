@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 8080",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "next lint",
     "generate-types": "gq http://localhost:3000/graphql --introspect -H 'Content-Type: application/json' > schema.graphql && node scripts/convert-schema.js && graphql-codegen --config codegen.config.yml"
