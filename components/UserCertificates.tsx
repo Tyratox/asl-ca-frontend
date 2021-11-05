@@ -15,11 +15,6 @@ import {
 import { GET_CURRENT_USER } from "../graphql/user";
 import { Maybe } from "../utilities/types";
 import Box from "../components/Box";
-import Button from "../components/form/Button";
-import Flex from "../components/Flex";
-import Input from "./form/Input";
-import Label from "./form/Label";
-import Table from "./Table";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
 
@@ -84,35 +79,38 @@ const UserCertificates: FunctionComponent<{
     };
 
   return (
-    <Flex>
-      <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginRight={0.5}>
+    <div className="flex wrap">
+      <Box width="half-on-large" paddingRight>
         <h1>Issue a new certificate</h1>
         <p>
           Before you issue a new certificate, please check the user information
           above and save the changes if necessary.
         </p>
-        <Label>Certificate Name</Label>
-        <Input
+        <label className="label">Certificate Name</label>
+        <input
+          className="input"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <Label>Certificate Password</Label>
-        <Input
+        <label className="label">Certificate Password</label>
+        <input
+          className="input"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button
+        <button
+          className="button"
           disabled={hasChanges || name.length === 0}
           onClick={generateCertificate}
         >
           Generate certificate
-        </Button>
+        </button>
       </Box>
-      <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}>
+      <Box width="half-on-large" paddingLeft>
         <h1>List of issued certificates</h1>
-        <Table>
+        <table className="table">
           <thead>
             <tr>
               <th>ID</th>
@@ -132,15 +130,17 @@ const UserCertificates: FunctionComponent<{
                     {c.is_revoked ? (
                       "Revoked"
                     ) : (
-                      <Button onClick={revoke(c.id)}>Revoke</Button>
+                      <button className="button" onClick={revoke(c.id)}>
+                        Revoke
+                      </button>
                     )}
                   </td>
                 </tr>
               ))}
           </tbody>
-        </Table>
+        </table>
       </Box>
-    </Flex>
+    </div>
   );
 };
 

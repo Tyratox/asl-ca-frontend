@@ -5,10 +5,6 @@ import { NextPage } from "next";
 import { useAuthenticate } from "../utilities/hooks";
 import { useRouter } from "next/dist/client/router";
 import Box from "../components/Box";
-import Button from "../components/form/Button";
-import Flex from "../components/Flex";
-import Input from "../components/form/Input";
-import Label from "../components/form/Label";
 import React, { useContext, useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import request, { CERT_LOGIN_URL } from "../utilities/request";
@@ -53,37 +49,43 @@ const Login: NextPage = () => {
 
   return (
     <Wrapper>
-      <Flex>
-        <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginRight={0.5}>
+      <div className="flex wrap">
+        <Box width="half-on-large" paddingRight>
           <h1>Login</h1>
-          <Label>User ID</Label>
-          <Input
+          <label className="label">User ID</label>
+          <input
+            className="input"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <Label>Password</Label>
-          <Input
+          <label className="label">Password</label>
+          <input
+            className="input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button onClick={login}>Login</Button> or{" "}
-          <Button
+          <button className="button" onClick={login}>
+            Login
+          </button>{" "}
+          or{" "}
+          <button
+            className="button"
             onClick={() => {
               window.location.href = CERT_LOGIN_URL;
             }}
           >
             Login using Certificate
-          </Button>
+          </button>
         </Box>
-        <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}>
+        <Box width="half-on-large" paddingLeft>
           <h1>Information</h1>
           You can either log in using your user ID and your password or using a
           TLS certificate. CA Administrators must always log in using their TLS
           certificate.
         </Box>
-      </Flex>
+      </div>
     </Wrapper>
   );
 };

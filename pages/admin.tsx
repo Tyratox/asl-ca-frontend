@@ -1,18 +1,11 @@
 import { AppContext, withApp } from "../components/AppWrapper";
 import { Maybe } from "../utilities/types";
 import { useAuthenticate } from "../utilities/hooks";
+import { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
-import Box from "../components/Box";
-import Button from "../components/form/Button";
-import Flex from "../components/Flex";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import UserCertificates from "../components/UserCertificates";
-import UserInformation from "../components/UserInformation";
-import Wrapper from "../components/Wrapper";
-import useSWR, { mutate } from "swr";
 import type { NextPage } from "next";
 
-const Home: NextPage = () => {
+const Admin: NextPage = () => {
   const { user, token } = useContext(AppContext);
   const router = useRouter();
 
@@ -44,21 +37,21 @@ const Home: NextPage = () => {
   /*if (!data || "error" in data) {
     return (
       <Wrapper>
-        <Flex>
-          <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginRight={0.5}>
+        <div className="flex wrap">
+          <Box width="half-on-large" paddingRight>
             <h1>System Information</h1>
             Error when loading: {JSON.stringify(data ? data : error)}
           </Box>
-          <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}></Box>
-        </Flex>
+          <Box width="half-on-large" paddingLeft></Box>
+        </div>
       </Wrapper>
     );
   }
 
   return (
     <Wrapper>
-      <Flex>
-        <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginRight={0.5}>
+      <div className="flex wrap">
+        <Box width="half-on-large" paddingRight>
           <h1>System Information</h1>
           <p>Current Serial Number: {data.serial}</p>
           <p>
@@ -68,10 +61,10 @@ const Home: NextPage = () => {
             Number of revoked certificates: {data.numberOfRevokedCertificates}
           </p>
         </Box>
-        <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}></Box>
-      </Flex>
+        <Box width="half-on-large" paddingLeft></Box>
+      </div>
     </Wrapper>
   );*/
 };
 
-export default withApp(Home);
+export default withApp(Admin);

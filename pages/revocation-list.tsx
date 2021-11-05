@@ -2,12 +2,9 @@ import { CERTIFICATE_REVOCATION_LIST } from "../graphql/certificates";
 import { Query } from "../schema";
 import { withApp } from "../components/AppWrapper";
 import Box from "../components/Box";
-import Button from "../components/form/Button";
-import Flex from "../components/Flex";
 import React from "react";
 import Wrapper from "../components/Wrapper";
 import request from "../utilities/request";
-import styled from "@emotion/styled";
 import useSWR from "swr";
 import type { NextPage } from "next";
 
@@ -18,13 +15,7 @@ const downloadList = (list: string) => {
   a.click(); //Downloaded file
 };
 
-const Textarea = styled.textarea`
-  width: 100%;
-  font-family: monospace;
-  padding: 1rem;
-`;
-
-const Home: NextPage = () => {
+const RevocationList: NextPage = () => {
   const { data, error } = useSWR<{ crl: Query["crl"] }>(
     CERTIFICATE_REVOCATION_LIST,
     (query) => request(query)
@@ -33,28 +24,35 @@ const Home: NextPage = () => {
   if (!data || "error" in data) {
     return (
       <Wrapper>
-        <Flex>
-          <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginRight={0.5}>
+        <div className="flex wrap">
+          <Box width="half-on-large" paddingRight>
             <h1>Certificate Revocation List</h1>
             Error when loading: {JSON.stringify(data ? data : error)}
           </Box>
-          <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}></Box>
-        </Flex>
+          <Box width="half-on-large" paddingLeft></Box>
+        </div>
       </Wrapper>
     );
   }
 
   return (
     <Wrapper>
-      <Flex>
-        <Box widths={[1, 1, 1, 1, 1]}>
+      <div className="flex wrap">
+        <Box width="full" paddingRight>
           <h1>Certificate Revocation List</h1>
-          <Button onClick={() => downloadList(data.crl)}>Download List</Button>
-          <Textarea readOnly rows={100} value={atob(data.crl)}></Textarea>
+          <button className="button" onClick={() => downloadList(data.crl)}>
+            Download List
+          </button>
+          <textarea
+            className="textarea monospace"
+            readOnly
+            rows={100}
+            value={atob(data.crl)}
+          ></textarea>
         </Box>
-      </Flex>
+      </div>
     </Wrapper>
   );
 };
 
-export default withApp(Home);
+export default withApp(RevocationList);

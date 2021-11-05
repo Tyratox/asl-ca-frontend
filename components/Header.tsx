@@ -1,46 +1,26 @@
 import { AppContext } from "./AppWrapper";
-import { colors } from "../utilities/style";
 import { useAuthenticate } from "../utilities/hooks";
 import Box from "./Box";
-import Container from "./Container";
-import Flex from "./Flex";
 import Head from "next/head";
 import Link from "next/link";
 import React, { useContext } from "react";
-import styled from "@emotion/styled";
-
-const StyledHeader = styled.div`
-  padding: 2rem;
-  margin-bottom: 1rem;
-
-  background-color: ${colors.primary};
-  color: ${colors.primaryContrast};
-`;
-
-const Links = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  a {
-    margin-right: 1rem;
-  }
-`;
 
 const Header = () => {
   const { user } = useContext(AppContext);
   const isAuthenticated = useAuthenticate();
 
   return (
-    <StyledHeader>
+    <header className="header">
       <Head>
         <title>iMovies CA</title>
       </Head>
-      <Container>
-        <Flex>
-          <Box widths={[1 / 3, 1 / 4, 1 / 5, 1 / 6]}>
+      <div className="container">
+        <div className="flex">
+          <Box width="header-small">
             <Link href="/">iMovies</Link>
           </Box>
-          <Box widths={[2 / 3, 3 / 4, 4 / 5, 5 / 6]}>
-            <Links>
+          <Box width="header-large">
+            <div className="header-links">
               {isAuthenticated && (
                 <Link href="/">Issue / Revoke Certificate</Link>
               )}
@@ -50,11 +30,11 @@ const Header = () => {
               <Link href="/revocation-list">Revocation List</Link>
               {!isAuthenticated && <Link href="/login">Login</Link>}
               {isAuthenticated && <Link href="/logout">Logout</Link>}
-            </Links>
+            </div>
           </Box>
-        </Flex>
-      </Container>
-    </StyledHeader>
+        </div>
+      </div>
+    </header>
   );
 };
 

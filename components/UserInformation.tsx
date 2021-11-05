@@ -5,11 +5,6 @@ import { Maybe } from "../utilities/types";
 import { Mutation, User } from "../schema";
 import { mutate } from "swr";
 import Box from "../components/Box";
-import Button from "../components/form/Button";
-import Flex from "../components/Flex";
-import Input from "../components/form/Input";
-import Label from "../components/form/Label";
-import Note from "../components/Note";
 import request from "../utilities/request";
 
 const UserInformation: FunctionComponent<{
@@ -84,58 +79,72 @@ const UserInformation: FunctionComponent<{
   return (
     <>
       <h1>User information</h1>
-      <Flex>
-        <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginRight={0.5}>
-          <Label>User ID</Label>
-          <Input type="text" value={user.username || ""} readOnly />
-          <Label>Password</Label>
-          <Input
+      <div className="flex wrap">
+        <Box width="half-on-large" paddingRight>
+          <label className="label">User ID</label>
+          <input
+            className="input"
+            type="text"
+            value={user.username || ""}
+            readOnly
+          />
+          <label className="label">Password</label>
+          <input
+            className="input"
             type="password"
             value={password || ""}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Note>
+          <small className="note">
             Note: If you leave this field empty, the password won&apos;t be
             changed.
-          </Note>
+          </small>
           {password && password.length > 0 && (
             <>
-              <Label>Old Password</Label>
-              <Input
+              <label className="label">Old Password</label>
+              <input
+                className="input"
                 type="password"
                 value={oldPassword || ""}
                 onChange={(e) => setOldPassword(e.target.value)}
               />
             </>
           )}
-          <Button onClick={save} disabled={!hasChanges} marginRight>
+          <button
+            className="button margin-right"
+            onClick={save}
+            disabled={!hasChanges}
+          >
             Save Changes
-          </Button>
-          <Button onClick={reset} disabled={!hasChanges}>
+          </button>
+          <button className="button" onClick={reset} disabled={!hasChanges}>
             Reset
-          </Button>
+          </button>
         </Box>
-        <Box widths={[1, 1, 1 / 2, 1 / 2, 1 / 2]} marginLeft={0.5}>
-          <Label>Firstname</Label>
-          <Input
+        <Box width="half-on-large" paddingLeft>
+          <label className="label">Firstname</label>
+          <input
+            className="input"
             type="text"
             value={firstname || ""}
             onChange={(e) => setFirstname(e.target.value)}
           />
-          <Label>Lastname</Label>
-          <Input
+          <label className="label">Lastname</label>
+          <input
+            className="input"
             type="text"
             value={lastname || ""}
             onChange={(e) => setLastname(e.target.value)}
           />
-          <Label>E-Mail</Label>
-          <Input
+          <label className="label">E-Mail</label>
+          <input
+            className="input"
             type="text"
             value={email || ""}
             onChange={(e) => setEmail(e.target.value)}
           />
         </Box>
-      </Flex>
+      </div>
     </>
   );
 };
