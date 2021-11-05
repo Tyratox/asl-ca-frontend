@@ -1,6 +1,6 @@
 import { isClient } from "./ssr";
-export const API_URL = process.env.NEXT_PUBLIC_API_URL;
-export const CERT_LOGIN_URL = process.env.NEXT_PUBLIC_CERT_LOGIN_URL;
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+export const CERT_LOGIN_URL = process.env.NEXT_PUBLIC_CERT_LOGIN_URL || "";
 
 export type Variables = { [key: string]: any };
 
