@@ -7,7 +7,7 @@ $primaryContrast: #fff;
 $success: #2ecc71;
 $info: #3498db;
 $warning: #fcbf37;
-$danger: #e74c3c;
+$danger: #cf4435;
 $disabled: #999999;
 $readOnly: #ddd;
 
@@ -118,6 +118,30 @@ button {
   &.margin-right {
     margin-right: 1rem;
   }
+}
+
+.secondary-button {
+  @extend .button;
+  background-color: transparent;
+  color: $primary;
+  border-style: solid;
+  border-width: 1px;
+  border-color: $primary;
+
+  &:disabled {
+    color: $disabled;
+    border-color: $disabled;
+    cursor: not-allowed;
+  }
+
+  &.margin-right {
+    margin-right: 1rem;
+  }
+}
+
+.danger-button {
+  @extend .button;
+  background-color: $danger;
 }
 
 .container {

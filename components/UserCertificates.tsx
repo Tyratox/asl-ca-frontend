@@ -17,6 +17,11 @@ import { Maybe } from "../utilities/types";
 import Box from "../components/Box";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const UserCertificates: FunctionComponent<{
   token: Maybe<string>;
@@ -25,7 +30,24 @@ const UserCertificates: FunctionComponent<{
   const { user } = useContext(AppContext);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [newCertificate, setNewCertificate] = useState("");
+  const [downloadOpen, setDownloadOpen] = React.useState(false);
 
+  const handleDownloadClose = (download: Boolean) => {
+    setDownloadOpen(false);
+    if(download){
+      //download private key
+      const a = document.createElement("a");
+      a.href = "data:application/octet-stream;base64," + newCertificate;
+      a.download = `${name}.p12`; //TODO: change extension
+      a.click(); //Downloaded file
+    }
+    setName("");
+    setPassword("");
+    setNewCertificate("");
+    mutate(GET_CURRENT_USER);
+  };
+  
   //maybe display the just generated certificate
   const [lastCertificate, setLastCertificate] =
     useState<Maybe<Certificate>>(null);
@@ -46,16 +68,8 @@ const UserCertificates: FunctionComponent<{
         //this will probably be already be the case
         //TODO: remove
         const file = result.generateCertificate.p12;
-
-        //download private key
-        const a = document.createElement("a");
-        a.href = "data:application/octet-stream;base64," + file;
-        a.download = `${result.generateCertificate.certificate.name}.p12`; //TODO: change extension
-        a.click(); //Downloaded file
-
-        setName("");
-        setPassword("");
-        mutate(GET_CURRENT_USER);
+        setNewCertificate(file);
+        setDownloadOpen(true);
       }
     );
   };
@@ -130,7 +144,7 @@ const UserCertificates: FunctionComponent<{
                     {c.is_revoked ? (
                       "Revoked"
                     ) : (
-                      <button className="button" onClick={revoke(c.id)}>
+                      <button className="danger-button" onClick={revoke(c.id)}>
                         Revoke
                       </button>
                     )}
@@ -140,6 +154,35 @@ const UserCertificates: FunctionComponent<{
           </tbody>
         </table>
       </Box>
+      <Dialog
+        open={downloadOpen}
+        onClose={handleDownloadClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Download " + name}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you want to download the newly created certificate in a PKCS#12 format?.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <button
+            className="secondary-button"
+            onClick={() => handleDownloadClose(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className="button"
+            onClick={() => handleDownloadClose(true)}
+          >
+            Download
+          </button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
