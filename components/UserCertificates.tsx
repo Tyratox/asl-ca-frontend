@@ -15,13 +15,13 @@ import {
 import { GET_CURRENT_USER } from "../graphql/user";
 import { Maybe } from "../utilities/types";
 import Box from "../components/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 const UserCertificates: FunctionComponent<{
   token: Maybe<string>;
@@ -33,9 +33,9 @@ const UserCertificates: FunctionComponent<{
   const [newCertificate, setNewCertificate] = useState("");
   const [downloadOpen, setDownloadOpen] = React.useState(false);
 
-  const handleDownloadClose = (download: Boolean) => {
+  const handleDownloadClose = (download: boolean) => {
     setDownloadOpen(false);
-    if(download){
+    if (download) {
       //download private key
       const a = document.createElement("a");
       a.href = "data:application/octet-stream;base64," + newCertificate;
@@ -47,7 +47,7 @@ const UserCertificates: FunctionComponent<{
     setNewCertificate("");
     mutate(GET_CURRENT_USER);
   };
-  
+
   //maybe display the just generated certificate
   const [lastCertificate, setLastCertificate] =
     useState<Maybe<Certificate>>(null);
@@ -160,12 +160,11 @@ const UserCertificates: FunctionComponent<{
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Download " + name}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Download " + name}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Do you want to download the newly created certificate in a PKCS#12 format?.
+            Do you want to download the newly created certificate in a PKCS#12
+            format?.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -175,10 +174,7 @@ const UserCertificates: FunctionComponent<{
           >
             Cancel
           </button>
-          <button
-            className="button"
-            onClick={() => handleDownloadClose(true)}
-          >
+          <button className="button" onClick={() => handleDownloadClose(true)}>
             Download
           </button>
         </DialogActions>
