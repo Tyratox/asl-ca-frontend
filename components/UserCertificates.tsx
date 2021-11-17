@@ -20,6 +20,7 @@ const UserCertificates: FunctionComponent<{
   const { user } = useContext(AppContext);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  //TODO what is appropriate default value? @Nico
   const [lastCertificateP12, setLastCertificateP12] = useState("");
   const [showModal, setShowModal] = React.useState(false);
 
@@ -167,7 +168,7 @@ const UserCertificates: FunctionComponent<{
                     {c.is_revoked ? (
                       "Revoked"
                     ) : (
-                      <button className="button" onClick={revoke(c.id)}>
+                      <button className="danger-button" onClick={revoke(c.id)}>
                         Revoke
                       </button>
                     )}
