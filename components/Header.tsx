@@ -21,10 +21,10 @@ const Header = () => {
           </Box>
           <Box width="header-large">
             <div className="header-links">
-              {isAuthenticated && (
+              {isAuthenticated && !user.isAdmin && (
                 <Link href="/">Issue / Revoke Certificate</Link>
               )}
-              {isAuthenticated && user && /*user.isAdministrator*/ false && (
+              {isAuthenticated && user && user.isAdmin && (
                 <Link href="/admin">Admin Interface</Link>
               )}
               <Link href="/revocation-list">Revocation List</Link>

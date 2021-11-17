@@ -98,6 +98,7 @@ type User {
   """The user's lastname from the legacy database"""
   lastname: String!
   username: String!
+  isAdmin: Boolean!
 }
 
 """An exception that is raised during authentication"""

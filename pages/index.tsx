@@ -19,6 +19,9 @@ const Home: NextPage = () => {
     if (!isAuthenticated) {
       router.push("/login");
     }
+    if (user?.isAdmin) {
+      router.push("/admin");
+    }
   }, [isAuthenticated]);
 
   if (!isAuthenticated || !user) {

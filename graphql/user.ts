@@ -24,6 +24,7 @@ export const GET_CURRENT_USER = /* GraphQL */ `
       firstname
       lastname
       email
+      isAdmin
       certificates {
         id
         name
