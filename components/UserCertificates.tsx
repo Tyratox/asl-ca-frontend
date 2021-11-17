@@ -1,10 +1,4 @@
-import React, {
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { FunctionComponent, useContext, useState } from "react";
 
 import { AppContext } from "./AppWrapper";
 import { Certificate, Mutation } from "../schema";
@@ -15,11 +9,7 @@ import {
 import { GET_CURRENT_USER } from "../graphql/user";
 import { Maybe } from "../utilities/types";
 import Box from "../components/Box";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import Modal from "./Modal";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
 
@@ -30,27 +20,27 @@ const UserCertificates: FunctionComponent<{
   const { user } = useContext(AppContext);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [newCertificate, setNewCertificate] = useState("");
-  const [downloadOpen, setDownloadOpen] = React.useState(false);
+  const [lastCertificateP12, setLastCertificateP12] = useState("");
+  const [showModal, setShowModal] = React.useState(false);
 
-  const handleDownloadClose = (download: boolean) => {
-    setDownloadOpen(false);
+  //maybe display the just generated certificate
+  const [lastCertificate, setLastCertificate] =
+    useState<Maybe<Certificate>>(null);
+
+  const handleCloseModal = (download: boolean) => {
+    setShowModal(false);
     if (download) {
       //download private key
       const a = document.createElement("a");
-      a.href = "data:application/octet-stream;base64," + newCertificate;
+      a.href = "data:application/octet-stream;base64," + lastCertificateP12;
       a.download = `${name}.p12`; //TODO: change extension
       a.click(); //Downloaded file
     }
     setName("");
     setPassword("");
-    setNewCertificate("");
+    setLastCertificateP12("");
     mutate(GET_CURRENT_USER);
   };
-
-  //maybe display the just generated certificate
-  const [lastCertificate, setLastCertificate] =
-    useState<Maybe<Certificate>>(null);
 
   const generateCertificate = (
     //@ts-ignore
@@ -68,8 +58,8 @@ const UserCertificates: FunctionComponent<{
         //this will probably be already be the case
         //TODO: remove
         const file = result.generateCertificate.p12;
-        setNewCertificate(file);
-        setDownloadOpen(true);
+        setLastCertificateP12(file);
+        setShowModal(true);
       }
     );
   };
@@ -121,6 +111,39 @@ const UserCertificates: FunctionComponent<{
         >
           Generate certificate
         </button>
+
+        {showModal && (
+          <Modal>
+            <div className="modalContainer">
+              <div className="modalContent">
+                <header className="modal_header">
+                  <h2 className="modal_header-title">
+                    {" "}
+                    Download Certificate {name}
+                  </h2>
+                </header>
+                <main className="modal_content">
+                  Do you want to download the newly created certificate in a
+                  PKCS#12 format?
+                </main>
+                <footer className="modal_footer">
+                  <button
+                    className="secondary-button margin-right"
+                    onClick={() => handleCloseModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="button"
+                    onClick={() => handleCloseModal(true)}
+                  >
+                    Download
+                  </button>
+                </footer>
+              </div>
+            </div>
+          </Modal>
+        )}
       </Box>
       <Box width="half-on-large" paddingLeft>
         <h1>List of issued certificates</h1>
@@ -144,7 +167,7 @@ const UserCertificates: FunctionComponent<{
                     {c.is_revoked ? (
                       "Revoked"
                     ) : (
-                      <button className="danger-button" onClick={revoke(c.id)}>
+                      <button className="button" onClick={revoke(c.id)}>
                         Revoke
                       </button>
                     )}
@@ -154,31 +177,6 @@ const UserCertificates: FunctionComponent<{
           </tbody>
         </table>
       </Box>
-      <Dialog
-        open={downloadOpen}
-        onClose={handleDownloadClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Download " + name}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you want to download the newly created certificate in a PKCS#12
-            format?.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <button
-            className="secondary-button"
-            onClick={() => handleDownloadClose(false)}
-          >
-            Cancel
-          </button>
-          <button className="button" onClick={() => handleDownloadClose(true)}>
-            Download
-          </button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };
