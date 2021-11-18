@@ -102,6 +102,12 @@ export type Query = {
   __typename?: "Query";
   /** The current certificate revocation list encoded in Base64 */
   crl: Scalars["String"];
+  /**The total number of certificates.*/
+  getCertCount: Scalars["Int"];
+  /**The total number of revoked certificates.*/
+  getRevokedCertCount: Scalars["Int"];
+  /**Current serial number.*/
+  getSerialNumber: Scalars["String"];
   /** Retrieves the current user */
   me: User;
 };
