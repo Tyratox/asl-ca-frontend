@@ -36,6 +36,7 @@ const Home: NextPage = () => {
       />
       <hr />
       <UserCertificates token={token} hasChanges={hasChanges} />
+
     </Wrapper>
   );
 };
