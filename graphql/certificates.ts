@@ -31,20 +31,10 @@ export const CERTIFICATE_REVOCATION_LIST = /* GraphQL */ `
   }
 `;
 
-export const SERIAL_NUMBER = /* GraphQL */ `
+export const ADMIN_INTERFACE_DATA = /* GraphQL */ `
   query {
     getSerialNumber
-  }
-`;
-
-export const CERTIFICATE_COUNT = /* GraphQL */ `
-  query {
     getCertCount
-  }
-`;
-
-export const REVOKED_CERTIFICATE_COUNT = /* GraphQL */ `
-  query {
     getRevokedCertCount
   }
 `;

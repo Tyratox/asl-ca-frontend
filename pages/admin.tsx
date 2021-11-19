@@ -1,9 +1,5 @@
+import { ADMIN_INTERFACE_DATA } from "../graphql/certificates";
 import { AppContext, withApp } from "../components/AppWrapper";
-import {
-  CERTIFICATE_COUNT,
-  REVOKED_CERTIFICATE_COUNT,
-  SERIAL_NUMBER,
-} from "../graphql/certificates";
 import { Maybe } from "../utilities/types";
 import { Query } from "../schema";
 import { useAuthenticate } from "../utilities/hooks";
@@ -21,39 +17,16 @@ const Admin: NextPage = () => {
 
   const isAuthenticated = useAuthenticate();
 
-  const getSerialNumber = () => {
-    const { data, error } = useSWR<{
-      getSerialNumber: Query["getSerialNumber"];
-    }>(SERIAL_NUMBER, (query) => request(query));
-    if (!data || "error" in data) {
-      return "Error when loading";
-    }
-    return data.getSerialNumber;
-  };
+  const { data, error } = useSWR<{
+    getSerialNumber: Query["getSerialNumber"];
+    getRevokedCertCount: Query["getRevokedCertCount"];
+    getCertCount: Query["getCertCount"];
+  }>(ADMIN_INTERFACE_DATA, (query) => request(query));
 
-  const getCertCount = () => {
-    const { data, error } = useSWR<{
-      getCertCount: Query["getCertCount"];
-    }>(CERTIFICATE_COUNT, (query) => request(query));
-    if (!data || "error" in data) {
-      return "Error when loading";
-    }
-    return data.getCertCount;
-  };
-
-  const getRevCertCount = () => {
-    const { data, error } = useSWR<{
-      getRevokedCertCount: Query["getRevokedCertCount"];
-    }>(REVOKED_CERTIFICATE_COUNT, (query) => request(query));
-    if (!data || "error" in data) {
-      return "Error when loading";
-    }
-    return data.getRevokedCertCount;
-  };
-
-  const serialNumber = getSerialNumber();
-  const certCount = getCertCount();
-  const revCertCout = getRevCertCount();
+  const serialNumber = (data && data.getSerialNumber) || "Error when loading";
+  const certCount = (data && data.getCertCount) || "Error when loading";
+  const revCertCout =
+    (data && data.getRevokedCertCount) || "Error when loading";
 
   useEffect(() => {
     if (!isAuthenticated) {
