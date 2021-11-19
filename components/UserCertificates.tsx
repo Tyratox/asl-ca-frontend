@@ -20,7 +20,6 @@ const UserCertificates: FunctionComponent<{
   const { user } = useContext(AppContext);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  //TODO what is appropriate default value? @Nico
   const [lastCertificateP12, setLastCertificateP12] = useState("");
   const [showModal, setShowModal] = React.useState(false);
 

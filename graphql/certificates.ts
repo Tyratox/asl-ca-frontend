@@ -30,3 +30,11 @@ export const CERTIFICATE_REVOCATION_LIST = /* GraphQL */ `
     crl
   }
 `;
+
+export const ADMIN_INTERFACE_DATA = /* GraphQL */ `
+  query {
+    getSerialNumber
+    getCertCount
+    getRevokedCertCount
+  }
+`;

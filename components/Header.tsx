@@ -24,7 +24,7 @@ const Header = () => {
               {isAuthenticated && (
                 <Link href="/">Issue / Revoke Certificate</Link>
               )}
-              {isAuthenticated && user && /*user.isAdministrator*/ false && (
+              {isAuthenticated && user && user.isAdmin && (
                 <Link href="/admin">Admin Interface</Link>
               )}
               <Link href="/revocation-list">Revocation List</Link>
