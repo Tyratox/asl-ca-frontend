@@ -19,6 +19,7 @@ const UserInformation: FunctionComponent<{
   const [firstname, setFirstname] = useState(user?.firstname);
   const [lastname, setLastname] = useState(user?.lastname);
   const [email, setEmail] = useState(user?.email);
+  const [error, setError] = useState<Maybe<string>>(null);
 
   useEffect(() => {
     const c =
@@ -33,22 +34,31 @@ const UserInformation: FunctionComponent<{
   }, [user, password, firstname, lastname, email]);
 
   const save = () => {
-    request(UPDATE_ME, { firstname, lastname, email }).then(
-      (result: { updateMe: Mutation["updateMe"] }) => {
-        mutate(GET_CURRENT_USER, { me: result.updateMe });
-      }
-    );
+    request(UPDATE_ME, { firstname, lastname, email })
+      .then((result: { updateMe: Mutation["updateMe"] }) => {
+        if ("message" in result.updateMe) {
+          setError(result.updateMe.message);
+        } else {
+          mutate(GET_CURRENT_USER, { me: result.updateMe });
+        }
+      })
+      .catch((e) => {
+        setError(e.message);
+      });
     if (password && password.length > 0) {
-      request(UPDATE_PASSWORD, { oldPassword, newPassword: password }).then(
-        (result: { updatePassword: Mutation["updatePassword"] }) => {
+      request(UPDATE_PASSWORD, { oldPassword, newPassword: password })
+        .then((result: { updatePassword: Mutation["updatePassword"] }) => {
           if ("message" in result.updatePassword) {
             //TODO: display error
+            setError(result.updatePassword.message);
           } else {
             setPassword(null);
             setOldPassword(null);
           }
-        }
-      );
+        })
+        .catch((e) => {
+          setError(e.message);
+        });
     }
   };
 
@@ -57,6 +67,7 @@ const UserInformation: FunctionComponent<{
     setFirstname(user?.firstname);
     setLastname(user?.lastname);
     setEmail(user?.email);
+    setError(null);
   };
 
   useEffect(() => {
@@ -120,6 +131,7 @@ const UserInformation: FunctionComponent<{
           <button className="button" onClick={reset} disabled={!hasChanges}>
             Reset
           </button>
+          {error && <div>{error}</div>}
         </Box>
         <Box width="half-on-large" paddingLeft>
           <label className="label">Firstname</label>

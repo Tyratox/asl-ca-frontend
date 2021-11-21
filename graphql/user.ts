@@ -39,16 +39,21 @@ export const GET_CURRENT_USER = /* GraphQL */ `
 export const UPDATE_ME = /* GraphQL */ `
   mutation UpdateMe($firstname: String!, $lastname: String!, $email: String!) {
     updateMe(firstname: $firstname, lastname: $lastname, email: $email) {
-      username
-      firstname
-      lastname
-      email
-      certificates {
-        id
-        name
-        is_revoked
-        created_at
-        updated_at
+      ... on User {
+        username
+        firstname
+        lastname
+        email
+        certificates {
+          id
+          name
+          is_revoked
+          created_at
+          updated_at
+        }
+      }
+      ... on InvalidEmailException {
+        message
       }
     }
   }
