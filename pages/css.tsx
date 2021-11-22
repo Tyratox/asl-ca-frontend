@@ -1,9 +1,5 @@
-import { AppContext, withApp } from "../components/AppWrapper";
-import { useAuthenticate } from "../utilities/hooks";
-import { useRouter } from "next/dist/client/router";
-import React, { useContext, useEffect, useState } from "react";
-import UserCertificates from "../components/UserCertificates";
-import UserInformation from "../components/UserInformation";
+import { withApp } from "../components/AppWrapper";
+import React from "react";
 import Wrapper from "../components/Wrapper";
 import type { NextPage } from "next";
 
