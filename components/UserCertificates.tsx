@@ -10,6 +10,7 @@ import { GET_CURRENT_USER } from "../graphql/user";
 import { Maybe } from "../utilities/types";
 import Box from "../components/Box";
 import Modal from "./Modal";
+import Spinner from "./Spinner";
 import request from "../utilities/request";
 import useSWR, { mutate } from "swr";
 
@@ -21,7 +22,9 @@ const UserCertificates: FunctionComponent<{
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [lastCertificateP12, setLastCertificateP12] = useState("");
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [generatingCertificate, setGeneratingCertificate] = useState(false);
+  const [error, setError] = useState<Maybe<string>>(null);
 
   //maybe display the just generated certificate
   const [lastCertificate, setLastCertificate] =
@@ -46,22 +49,35 @@ const UserCertificates: FunctionComponent<{
     //@ts-ignore
     e: MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    if (hasChanges) {
+    if (hasChanges || generatingCertificate) {
       return;
     }
 
-    return request(GENERATE_CERTIFICATE, { name, password }).then(
-      (result: { generateCertificate: Mutation["generateCertificate"] }) => {
-        setLastCertificate(result.generateCertificate.certificate);
+    setGeneratingCertificate(true);
 
-        //encode in base64, if actualy certificate is downloaded
-        //this will probably be already be the case
-        //TODO: remove
-        const file = result.generateCertificate.p12;
-        setLastCertificateP12(file);
-        setShowModal(true);
-      }
-    );
+    return request(GENERATE_CERTIFICATE, { name, password })
+      .then(
+        (result: { generateCertificate: Mutation["generateCertificate"] }) => {
+          setLastCertificate(result.generateCertificate.certificate);
+
+          //encode in base64, if actualy certificate is downloaded
+          //this will probably be already be the case
+          //TODO: remove
+          const file = result.generateCertificate.p12;
+          setLastCertificateP12(file);
+          setShowModal(true);
+          setGeneratingCertificate(false);
+        }
+      )
+      .catch((e) => {
+        if (e.message && e.message.includes("ThrottlerException")) {
+          setError("Please wait a minute and then try again.");
+          setGeneratingCertificate(false);
+        } else {
+          setError(e.message);
+          setGeneratingCertificate(false);
+        }
+      });
   };
   const revoke =
     (id: string) =>
@@ -104,13 +120,18 @@ const UserCertificates: FunctionComponent<{
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <small className="note">
+          Note: You can only generate up to five certificates per minute.
+        </small>
         <button
-          className="button"
-          disabled={hasChanges || name.length === 0}
+          className="button vertical-center"
+          disabled={hasChanges || name.length === 0 || generatingCertificate}
           onClick={generateCertificate}
         >
           Generate certificate
+          {generatingCertificate && <Spinner />}
         </button>
+        {error && <div>{error}</div>}
 
         {showModal && (
           <Modal>

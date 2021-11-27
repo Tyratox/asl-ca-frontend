@@ -1,6 +1,6 @@
 import { AUTHENTICATE } from "../graphql/user";
 import { AppContext, withApp } from "../components/AppWrapper";
-import { AuthenticationResult, Mutation } from "../schema";
+import { AuthenticationResult, Maybe, Mutation } from "../schema";
 import { NextPage } from "next";
 import { useAuthenticate } from "../utilities/hooks";
 import { useRouter } from "next/dist/client/router";
@@ -13,6 +13,7 @@ const Login: NextPage = () => {
   const { user, token } = useContext(AppContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<Maybe<string>>(null);
 
   const isAuthenticated = useAuthenticate();
   const router = useRouter();
@@ -24,17 +25,23 @@ const Login: NextPage = () => {
   }, [isAuthenticated]);
 
   const login = () => {
-    request(AUTHENTICATE, { username, password }).then(
-      (result: { authenticate: Mutation["authenticate"] }) => {
+    request(AUTHENTICATE, { username, password })
+      .then((result: { authenticate: Mutation["authenticate"] }) => {
         if ("message" in result.authenticate) {
-          //TODO: display error message
+          setError(result.authenticate.message);
           return false;
         } else {
           localStorage.setItem("auth-token", result.authenticate.session_id);
           router.push("/");
         }
-      }
-    );
+      })
+      .catch((e) => {
+        if (e.message && e.message.includes("ThrottlerException")) {
+          setError("Please wait a minute and then try again.");
+        } else {
+          setError(e.message);
+        }
+      });
   };
 
   useEffect(() => {
@@ -66,6 +73,7 @@ const Login: NextPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && <div>{error}</div>}
           <button className="button" onClick={login}>
             Login
           </button>{" "}
